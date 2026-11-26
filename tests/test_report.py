@@ -61,5 +61,33 @@ class ReportTest(unittest.TestCase):
             self.assertIn("DUTPilot Summary", summary_path.read_text(encoding="utf-8"))
 
 
+    def test_schema_version_matches_package_version(self):
+        import dutpilot
+        from dutpilot import report as report_module
+
+        self.assertEqual(report_module.SCHEMA_VERSION, dutpilot.__version__)
+
+    def test_summary_includes_primary_error_and_hint(self):
+        report = build_report(
+            case="adder",
+            simulator="icarus",
+            status="fail",
+            stage="simulate",
+            top="tb_adder",
+            commands={"compile": "iverilog", "simulate": "vvp"},
+            artifacts={"report_json": "reports/report.json"},
+            markers={"pass": [], "fail": ["DUTPILOT_FAIL: expected 5, got 4"]},
+            errors=[],
+            warnings=[],
+            return_codes={"compile": 0, "simulate": 0},
+            primary_error="DUTPILOT_FAIL: expected 5, got 4",
+            next_action_hint="Inspect the testbench failure marker.",
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            summary = write_summary(report, Path(tmp)).read_text(encoding="utf-8")
+            self.assertIn("DUTPILOT_FAIL: expected 5, got 4", summary)
+            self.assertIn("Inspect the testbench failure marker.", summary)
+
+
 if __name__ == "__main__":
     unittest.main()

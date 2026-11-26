@@ -6,8 +6,12 @@ from pathlib import Path
 import json
 from typing import Any
 
+from . import __version__
 
-SCHEMA_VERSION = "0.1.1"
+
+# The report schema is versioned together with the package. Keeping a second
+# literal here silently drifts every time the version is bumped.
+SCHEMA_VERSION = __version__
 
 
 def build_report(
@@ -70,6 +74,10 @@ def write_summary(report: dict[str, Any], reports_dir: Path) -> Path:
         f"- Errors: {len(report['errors'])}",
         f"- Warnings: {len(report['warnings'])}",
     ]
+    if report.get("primary_error"):
+        lines.extend(["", "## Primary Error", f"- {report['primary_error']}"])
+    if report.get("next_action_hint"):
+        lines.extend(["", "## Next Action", f"- {report['next_action_hint']}"])
     if report["errors"]:
         lines.extend(["", "### Errors"])
         lines.extend(f"- {error}" for error in report["errors"])

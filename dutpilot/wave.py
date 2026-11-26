@@ -28,15 +28,15 @@ def resolve_wave_file(run_dir: str | Path, file: str | Path | None = None) -> Pa
     if not waves_dir.exists():
         raise WaveError(f"No VCD waveform found under {waves_dir}")
 
-    vc_files = sorted(path for path in waves_dir.rglob("*.vcd") if path.is_file())
-    if not vc_files:
+    vcd_files = sorted(path for path in waves_dir.rglob("*.vcd") if path.is_file())
+    if not vcd_files:
         raise WaveError(f"No VCD waveform found under {waves_dir}")
-    if len(vc_files) > 1:
-        listed = "\n".join(f"  {path}" for path in vc_files)
+    if len(vcd_files) > 1:
+        listed = "\n".join(f"  {path}" for path in vcd_files)
         raise WaveError(
             "Multiple VCD waveforms found. Please specify one with --file:\n" + listed
         )
-    return vc_files[0]
+    return vcd_files[0]
 
 
 def open_wave(run_dir: str | Path, file: str | Path | None = None) -> Path:
