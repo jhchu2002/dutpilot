@@ -157,9 +157,17 @@ See `docs/build-your-own-skill.md`.
 Clone and install in editable mode:
 
 ```bash
-git clone git@github.com:aquariuser/dutpilot.git
+git clone https://github.com/jhchu2002/dutpilot.git
 cd dutpilot
 python3 -m pip install -e .
+```
+
+The examples read `dutpilot.yaml` through PyYAML when it is installed, and fall
+back to a built-in parser for simple key/value configs. To guarantee YAML
+support, install the extra:
+
+```bash
+python3 -m pip install -e ".[yaml]"
 ```
 
 Install the sample RTL backend dependencies:
