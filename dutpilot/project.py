@@ -53,6 +53,10 @@ def create_project(config: VerifyConfig, runs_root: str | Path = "dutpilot_runs"
         layout.scripts_dir,
         layout.waves_dir,
     ):
+        # Each run starts from a clean slate. Leaving artifacts from a previous
+        # run behind makes reports and waveforms lie about what just executed.
+        if directory.exists():
+            shutil.rmtree(directory)
         directory.mkdir(parents=True, exist_ok=True)
 
     shutil.copy2(config.dut, layout.dut_path)
